@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E20789242E01E22800697161 /* VisionCameraMrzScannerPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20789232E01E22800697161 /* VisionCameraMrzScannerPackage.swift */; };
 		F4FF95D7245B92E800C19C63 /* VisionCameraMrzScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* VisionCameraMrzScanner.swift */; };
 /* End PBXBuildFile section */
 
@@ -26,7 +25,6 @@
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libVisionCameraMrzScanner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVisionCameraMrzScanner.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E7B5891CC2AC0600A0062D /* VisionCameraMrzScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionCameraMrzScanner.m; sourceTree = "<group>"; };
-		E20789232E01E22800697161 /* VisionCameraMrzScannerPackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCameraMrzScannerPackage.swift; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* VisionCameraMrzScanner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisionCameraMrzScanner-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* VisionCameraMrzScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCameraMrzScanner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,7 +51,6 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				E20789232E01E22800697161 /* VisionCameraMrzScannerPackage.swift */,
 				F4FF95D6245B92E800C19C63 /* VisionCameraMrzScanner.swift */,
 				B3E7B5891CC2AC0600A0062D /* VisionCameraMrzScanner.m */,
 				F4FF95D5245B92E700C19C63 /* VisionCameraMrzScanner-Bridging-Header.h */,
@@ -118,7 +115,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E20789242E01E22800697161 /* VisionCameraMrzScannerPackage.swift in Sources */,
 				F4FF95D7245B92E800C19C63 /* VisionCameraMrzScanner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
