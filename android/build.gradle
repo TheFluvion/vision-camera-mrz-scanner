@@ -66,14 +66,12 @@ repositories {
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
-  // For < 0.71, this will be from the local maven repo
-  // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
-  //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation project(":react-native-vision-camera")
-  implementation "com.google.android.gms:play-services-mlkit-text-recognition:18.0.0"
-  implementation "androidx.camera:camera-core:1.1.0-alpha08"
+
+  // MLKit text recognition
+  implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
 }
 
 if (isNewArchitectureEnabled()) {
