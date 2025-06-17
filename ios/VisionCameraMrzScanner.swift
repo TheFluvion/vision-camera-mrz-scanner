@@ -3,6 +3,7 @@ import AVFoundation
 import MLKitVision
 import MLKitTextRecognition
 import VisionCamera
+import FrameProcessor
 
 @objc(VisionCameraMrzScannerPlugin)
 public class VisionCameraMrzScannerPlugin: NSObject, FrameProcessorPlugin {
