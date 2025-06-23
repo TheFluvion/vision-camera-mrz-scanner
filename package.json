@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-mrz-scanner",
-  "version": "0.3.1",
+  "version": "0.4.1-adapted-vision-camera-V4.x.x",
   "description": "VisionCamera Frame Processor Plugin to detect and read MRZ data from passports using MLKit Text Recognition.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
