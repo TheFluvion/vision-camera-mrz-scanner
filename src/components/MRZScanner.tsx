@@ -1,9 +1,9 @@
-import React, {FC, PropsWithChildren, useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {MRZCamera, MRZScannerProps} from 'vision-camera-mrz-scanner';
+import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { MRZCamera, MRZScannerProps } from 'vision-camera-mrz-scanner';
 
-import type {MRZProperties} from '../types/mrzProperties';
-import {parseMRZ} from '../util/mrzParser';
+import type { MRZProperties } from '../types/mrzProperties';
+import { parseMRZ } from '../util/mrzParser';
 
 const MRZScanner: FC<PropsWithChildren<MRZScannerProps>> = ({
   style,
@@ -182,7 +182,7 @@ const MRZScanner: FC<PropsWithChildren<MRZScannerProps>> = ({
       textAlignVertical: 'center',
       height: '100%',
     },
-    flexRow: {flexDirection: 'row'},
+    flexRow: { flexDirection: 'row' },
     givenNamesQAList: {
       color: statusCheck(givenNamesQAList.length),
     },

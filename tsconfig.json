@@ -2,15 +2,19 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "vision-camera-mrz-scanner": ["./src/index"]
+      "vision-camera-mrz-scanner": [
+        "./src/index"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
-    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": false,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -25,5 +29,8 @@
     "strict": true,
     "target": "esnext"
   },
-  "exclude": ["docs", "assets"]
+  "exclude": [
+    "docs",
+    "assets"
+  ]
 }

@@ -1,4 +1,12 @@
 {
   "extends": "./tsconfig",
-  "exclude": ["example", "docs", "assets"]
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "lib/typescript",
+    "verbatimModuleSyntax": false
+  },
+  "include": [
+    "src"
+  ]
 }
