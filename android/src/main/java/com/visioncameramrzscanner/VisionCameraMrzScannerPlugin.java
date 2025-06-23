@@ -31,15 +31,20 @@ public class VisionCameraMrzScannerPlugin extends FrameProcessorPlugin {
     final CountDownLatch latch = new CountDownLatch(1);
     final Map<String, Object> result = new HashMap<>();
 
-    recognizer.process(image)
-      .addOnSuccessListener(visionText -> {
-        result.put("text", visionText.getText());
-        latch.countDown();
-      })
-      .addOnFailureListener(e -> {
-        Log.e("VisionCameraMrzScanner", "Text recognition failed", e);
-        latch.countDown();
-      });
+    try {
+      recognizer.process(image)
+        .addOnSuccessListener(visionText -> {
+          result.put("text", visionText.getText());
+          latch.countDown();
+        })
+        .addOnFailureListener(e -> {
+          Log.e("VisionCameraMrzScanner", "Text recognition failed", e);
+          latch.countDown();
+        });
+    } catch (Exception e) {
+      Log.e("VisionCameraMrzScanner", "Recognition threw an exception", e);
+      latch.countDown();
+    }
 
     try {
       latch.await();

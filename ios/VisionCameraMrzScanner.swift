@@ -5,8 +5,8 @@ import Foundation
 
 @objc(VisionCameraMrzScannerPlugin)
 public class VisionCameraMrzScannerPlugin: NSObject {
-  private let textRecognizer = TextRecognizer.textRecognizer()
-  
+  private let textRecognizer = TextRecognizer.textRecognizer(options: TextRecognizerOptions())
+
   @objc
   public func onFrame(_ imageBuffer: CMSampleBuffer, withOrientation orientation: NSNumber, withConfig config: NSDictionary, withPromise resolve: @escaping RCTPromiseResolveBlock, withReject reject: @escaping RCTPromiseRejectBlock) {
     
