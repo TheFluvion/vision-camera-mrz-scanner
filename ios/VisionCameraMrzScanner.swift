@@ -3,13 +3,18 @@ import AVFoundation
 import MLKitVision
 import MLKitTextRecognition
 import VisionCamera
-import FrameProcessor
 
 @objc(VisionCameraMrzScannerPlugin)
-public class VisionCameraMrzScannerPlugin: NSObject, FrameProcessorPlugin {
+public class VisionCameraMrzScannerPlugin: NSObject {
     
     private let textRecognizer = TextRecognizer.textRecognizer()
 
+    @objc
+    public static func register(_ proxy: VisionCameraProxy) {
+        proxy.registerFrameProcessorPlugin("scanMRZ", plugin: VisionCameraMrzScannerPlugin())
+    }
+
+    @objc
     public func callback(_ frame: Frame!, withArguments arguments: [Any]!) -> Any! {
         guard let buffer = CMSampleBufferGetImageBuffer(frame.buffer) else {
             print("Failed to get image buffer from sample buffer.")
@@ -17,7 +22,7 @@ public class VisionCameraMrzScannerPlugin: NSObject, FrameProcessorPlugin {
         }
 
         let visionImage = VisionImage(buffer: frame.buffer)
-        visionImage.orientation = .up // Ajustar si necesitás orientación real
+        visionImage.orientation = .up
 
         do {
             let result = try textRecognizer.results(in: visionImage)
