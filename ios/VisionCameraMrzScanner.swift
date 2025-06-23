@@ -1,53 +1,48 @@
-import Foundation
-import AVFoundation
 import MLKitVision
 import MLKitTextRecognition
-import VisionCamera
+import AVFoundation
+import Foundation
 
 @objc(VisionCameraMrzScannerPlugin)
 public class VisionCameraMrzScannerPlugin: NSObject {
+  private let textRecognizer = TextRecognizer.textRecognizer()
+  
+  @objc
+  public func onFrame(_ imageBuffer: CMSampleBuffer, withOrientation orientation: NSNumber, withConfig config: NSDictionary, withPromise resolve: @escaping RCTPromiseResolveBlock, withReject reject: @escaping RCTPromiseRejectBlock) {
     
-    private let textRecognizer = TextRecognizer.textRecognizer()
-
-    @objc
-    public static func register(_ proxy: VisionCameraProxy) {
-        proxy.registerFrameProcessorPlugin("scanMRZ", plugin: VisionCameraMrzScannerPlugin())
+    guard let pixelBuffer = CMSampleBufferGetImageBuffer(imageBuffer) else {
+      reject("E_IMAGE_BUFFER", "No image buffer", nil)
+      return
     }
 
-    @objc
-    public func callback(_ frame: Frame!, withArguments arguments: [Any]!) -> Any! {
-        guard let buffer = CMSampleBufferGetImageBuffer(frame.buffer) else {
-            print("Failed to get image buffer from sample buffer.")
-            return nil
-        }
+    let visionImage = VisionImage(buffer: imageBuffer)
+    visionImage.orientation = .up
 
-        let visionImage = VisionImage(buffer: frame.buffer)
-        visionImage.orientation = .up
+    do {
+      let result = try textRecognizer.results(in: visionImage)
+      let blocks = result.blocks.map { block -> [String: Any] in
+        return [
+          "text": block.text,
+          "cornerPoints": block.cornerPoints.map {
+            return ["x": $0.cgPointValue.x, "y": $0.cgPointValue.y]
+          },
+          "frame": [
+            "x": block.frame.origin.x,
+            "y": block.frame.origin.y,
+            "width": block.frame.size.width,
+            "height": block.frame.size.height
+          ]
+        ]
+      }
 
-        do {
-            let result = try textRecognizer.results(in: visionImage)
-            return [
-                "result": [
-                    "text": result.text,
-                    "blocks": result.blocks.map { block in
-                        return [
-                            "text": block.text,
-                            "cornerPoints": block.cornerPoints.map {
-                                return ["x": $0.cgPointValue.x, "y": $0.cgPointValue.y]
-                            },
-                            "frame": [
-                                "x": block.frame.origin.x,
-                                "y": block.frame.origin.y,
-                                "width": block.frame.size.width,
-                                "height": block.frame.size.height
-                            ]
-                        ]
-                    }
-                ]
-            ]
-        } catch {
-            print("Text recognition failed: \(error.localizedDescription)")
-            return nil
-        }
+      resolve([
+        "result": [
+          "text": result.text,
+          "blocks": blocks
+        ]
+      ])
+    } catch {
+      reject("E_TEXT_RECOGNITION", error.localizedDescription, error)
     }
+  }
 }
