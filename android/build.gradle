@@ -75,7 +75,7 @@ dependencies {
   implementation project(":react-native-vision-camera")
 
   // MLKit text recognition
-implementation 'com.google.mlkit:text-recognition:16.0.0'
+  implementation 'com.google.mlkit:text-recognition:16.0.0'
 }
 
 if (isNewArchitectureEnabled()) {
