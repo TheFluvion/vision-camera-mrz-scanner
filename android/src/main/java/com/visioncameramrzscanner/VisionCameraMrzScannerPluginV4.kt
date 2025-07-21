@@ -14,6 +14,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
 
 import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry
@@ -165,23 +166,24 @@ class VisionCameraMrzScannerProcessor{
 class VisionCameraMrzScannerPluginV4 {
     companion object {
         @JvmStatic
-        fun install(proxy: VisionCameraProxy)
-
+        fun install(proxy: VisionCameraProxy) {
             val processorInstance = VisionCameraMrzScannerProcessor()
 
-            // Registramos el plugin. El constructor de FrameProcessorPlugin toma:
-            // 1. El nombre del plugin (que será la función global en JS: `__scanMRZ`)
-            // 2. Un 'initializer' lambda. Esta lambda se ejecuta UNA VEZ al cargar el JSI.
-            //    Recibe la 'proxy' (VisionCameraProxy) y 'options' (opciones de inicialización, si las hubiera).
-            //    Debe devolver un 'FrameProcessorPlugin' (una función que procesa el frame).
             FrameProcessorPluginRegistry.addFrameProcessorPlugin(
-                "__scanMRZ", // El nombre de tu función JSI global
+                "__scanMRZ",
                 { actualProxy: VisionCameraProxy, options: Map<String, Any>? ->
-                    // Esta lambda se ejecuta UNA VEZ para inicializar el plugin
-                    // Retorna la lambda que VisionCamera llamará para CADA frame
-                    FrameProcessorPlugin { frame: ImageProxy, runtimeArguments: Map<String, Any>? ->
-                        // Esta es la función REAL del Frame Processor que se ejecuta en el thread de VisionCamera.
-                        processorInstance.process(frame, runtimeArguments)
+
+                    object : FrameProcessorPlugin() {
+                        override fun callback(frame: Frame, arguments: Map<String?, Any?>?): Any? {
+                            val imageProxy = try {
+                                frame.getImageProxy()
+                            } catch (e: Exception) {
+                                Log.e("MRZScannerModule", "Error getting ImageProxy from Frame: ${e.message}", e)
+                                return null
+                            }
+
+                            return processorInstance.process(imageProxy, arguments as Map<String, Any>?)
+                        }
                     }
                 }
             )
