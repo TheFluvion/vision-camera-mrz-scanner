@@ -14,8 +14,9 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
+
+import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry
 import com.mrousavy.camera.frameprocessors.VisionCameraProxy
 
 class VisionCameraMrzScannerProcessor{
@@ -136,9 +137,7 @@ class VisionCameraMrzScannerProcessor{
 
     @SuppressLint("NewApi")
     fun process(frame: ImageProxy, params: Map<String, Any>?): Any? {
-
         val result = WritableNativeMap()
-
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         @SuppressLint("UnsafeOptInUsageError")
         val mediaImage: Image? = frame.getImage()
@@ -147,15 +146,16 @@ class VisionCameraMrzScannerProcessor{
             return try {
                 val image = InputImage.fromMediaImage(mediaImage, frame.imageInfo.rotationDegrees)
                 val task: Task<Text> = recognizer.process(image)
-                    val text: Text = Tasks.await<Text>(task)
-                    result.putString("text", text.text)
-                    result.putArray("blocks", getBlockArray(text.textBlocks))
-                    val data = WritableNativeMap()
-                    data.putMap("result", result)
-                    return data
+                val text: Text = Tasks.await<Text>(task)
+                result.putString("text", text.text)
+                result.putArray("blocks", getBlockArray(text.textBlocks))
+                val data = WritableNativeMap()
+                data.putMap("result", result)
+                return data
             } catch (e: Exception) {
                 Log.e("VisionCameraMrzScanner", "Error: ${e.message}")
                 e.printStackTrace()
+                return null
             }
         }
         return null
@@ -165,24 +165,27 @@ class VisionCameraMrzScannerProcessor{
 class VisionCameraMrzScannerPluginV4 {
     companion object {
         @JvmStatic
-        fun install(proxy: VisionCameraProxy) {
-            val processor = VisionCameraMrzScannerProcessor() // Instancia tu clase de lógica
+        fun install(proxy: VisionCameraProxy)
 
-            // Registro del Frame Processor en VisionCamera v4
-            FrameProcessorPlugin.register(
-                name = "__scanMRZ", // Nombre del plugin que se usará en JS: `__scanMRZ`
-                initializer = { options: Map<String, Any>?, args: Array<Any>? ->
-                    // El `initializer` es llamado cuando el Frame Processor es inicializado.
-                    // 'options' son argumentos de configuración pasados al inicializar el worklet.
-                    // 'args' son argumentos posicionales pasados al inicializar (menos común para esto).
+            val processorInstance = VisionCameraMrzScannerProcessor()
 
-                    // La lambda que se devuelve es la que VisionCamera llamará para cada frame.
-                    // Recibe el 'frame' y 'runtimeArguments' (lo que se pasa al llamar __scanMRZ(frame, { /* tus args */ }))
-                    { frame: ImageProxy, runtimeArguments: Map<String, Any>? ->
-                        processor.process(frame, runtimeArguments)
+            // Registramos el plugin. El constructor de FrameProcessorPlugin toma:
+            // 1. El nombre del plugin (que será la función global en JS: `__scanMRZ`)
+            // 2. Un 'initializer' lambda. Esta lambda se ejecuta UNA VEZ al cargar el JSI.
+            //    Recibe la 'proxy' (VisionCameraProxy) y 'options' (opciones de inicialización, si las hubiera).
+            //    Debe devolver un 'FrameProcessorPlugin' (una función que procesa el frame).
+            FrameProcessorPluginRegistry.addFrameProcessorPlugin(
+                "__scanMRZ", // El nombre de tu función JSI global
+                { actualProxy: VisionCameraProxy, options: Map<String, Any>? ->
+                    // Esta lambda se ejecuta UNA VEZ para inicializar el plugin
+                    // Retorna la lambda que VisionCamera llamará para CADA frame
+                    FrameProcessorPlugin { frame: ImageProxy, runtimeArguments: Map<String, Any>? ->
+                        // Esta es la función REAL del Frame Processor que se ejecuta en el thread de VisionCamera.
+                        processorInstance.process(frame, runtimeArguments)
                     }
                 }
             )
+            Log.d("MRZScannerModule", "Frame Processor '__scanMRZ' registered successfully!")
         }
     }
 }
