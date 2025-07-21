@@ -172,9 +172,10 @@ class VisionCameraMrzScannerPluginV4 {
             FrameProcessorPluginRegistry.addFrameProcessorPlugin(
                 "__scanMRZ",
                 { actualProxy: VisionCameraProxy, options: Map<String, Any>? ->
-
+                    Log.d("MRZScannerModule", "Initializing FrameProcessorPlugin for __scanMRZ...")
                     object : FrameProcessorPlugin() {
                         override fun callback(frame: Frame, arguments: Map<String?, Any?>?): Any? {
+                            Log.d("MRZScannerModule", "FrameProcessorPlugin callback for __scanMRZ invoked!")
                             val imageProxy = try {
                                 frame.getImageProxy()
                             } catch (e: Exception) {
